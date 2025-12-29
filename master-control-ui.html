@@ -1,0 +1,276 @@
+<!-- master-control-ui.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Master Control Console</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:Inter,system-ui,Arial;margin:0;background:#f4f6f8;color:#0f172a}
+    .app{display:flex;height:100vh}
+    .sidebar{width:320px;background:#fff;padding:16px;border-right:1px solid #e6eefc;box-shadow:0 6px 18px rgba(2,6,23,0.04);overflow:auto}
+    .main{flex:1;padding:18px;overflow:auto}
+    h2{margin:6px 0 12px 0}
+    .search{display:flex;gap:8px;margin-bottom:12px}
+    input,select,textarea{padding:8px;border-radius:6px;border:1px solid #e6eefc}
+    button{padding:8px 10px;border-radius:6px;border:0;background:#0b5cff;color:#fff;cursor:pointer}
+    .btn-danger{background:#ef4444}
+    .tenant{padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #eef2ff;display:flex;justify-content:space-between;align-items:center}
+    .muted{color:#6b7280}
+    .panel{background:#fff;padding:12px;border-radius:8px;box-shadow:0 6px 18px rgba(2,6,23,0.04);margin-bottom:12px}
+    .row{display:flex;gap:8px;align-items:center}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #eef2ff;text-align:left}
+    .small{font-size:13px;color:#6b7280}
+    .actions{display:flex;gap:8px}
+    pre{background:#f8fafc;padding:8px;border-radius:6px;overflow:auto}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h2>Master Control</h2>
+
+      <div class="panel">
+        <div class="row">
+          <input id="masterToken" placeholder="Master token" style="flex:1" />
+          <button id="saveTokenBtn">Save</button>
+        </div>
+        <div class="small muted" style="margin-top:8px">Store your master token in the browser session (demo only).</div>
+      </div>
+
+      <div class="panel">
+        <div class="search">
+          <input id="tenantSearch" placeholder="Search tenants" style="flex:1" />
+          <select id="tenantStatus">
+            <option value="">All</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+            <option value="deleted">Deleted</option>
+          </select>
+        </div>
+        <div style="margin-top:8px" class="row">
+          <input id="newTenantName" placeholder="New tenant name" style="flex:1" />
+          <button id="createTenantBtn">Create</button>
+        </div>
+      </div>
+
+      <div id="tenantsList" style="margin-top:12px"></div>
+    </aside>
+
+    <main class="main">
+      <div id="mainContent">
+        <h2>Overview</h2>
+        <div class="panel">
+          <div class="row">
+            <div style="flex:1">
+              <div class="small muted">Total tenants</div>
+              <div id="totalTenants" style="font-size:20px;font-weight:700">0</div>
+            </div>
+            <div style="flex:1">
+              <div class="small muted">Suspended</div>
+              <div id="suspendedCount" style="font-size:20px;font-weight:700">0</div>
+            </div>
+            <div style="flex:1">
+              <div class="small muted">Deleted</div>
+              <div id="deletedCount" style="font-size:20px;font-weight:700">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tenantDetailsArea"></div>
+
+        <div id="auditArea"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE = (location.hostname === 'localhost') ? 'http://localhost:4000/api' : '/api';
+    let MASTER_TOKEN = localStorage.getItem('master_token') || '';
+
+    document.getElementById('masterToken').value = MASTER_TOKEN;
+    document.getElementById('saveTokenBtn').addEventListener('click', () => {
+      MASTER_TOKEN = document.getElementById('masterToken').value.trim();
+      localStorage.setItem('master_token', MASTER_TOKEN);
+      alert('Master token saved in browser (demo).');
+      loadTenants();
+    });
+
+    function headers() {
+      return { 'Content-Type': 'application/json', 'x-master-token': MASTER_TOKEN };
+    }
+
+    async function api(path, opts = {}) {
+      const res = await fetch(API_BASE + path, Object.assign({ headers: headers() }, opts));
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(res.status + ' ' + txt);
+      }
+      return res.json();
+    }
+
+    // Load tenants
+    async function loadTenants() {
+      try {
+        const q = document.getElementById('tenantSearch').value.trim();
+        const status = document.getElementById('tenantStatus').value;
+        const url = '/tenants?q=' + encodeURIComponent(q) + (status ? '&status=' + encodeURIComponent(status) : '');
+        const tenants = await api(url);
+        renderTenants(tenants);
+        document.getElementById('totalTenants').textContent = tenants.length;
+        document.getElementById('suspendedCount').textContent = tenants.filter(t => t.status === 'suspended').length;
+        document.getElementById('deletedCount').textContent = tenants.filter(t => t.status === 'deleted').length;
+      } catch (err) {
+        alert('Error loading tenants: ' + err.message);
+      }
+    }
+
+    function renderTenants(list) {
+      const container = document.getElementById('tenantsList');
+      container.innerHTML = '';
+      list.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'tenant';
+        div.innerHTML = `<div>
+          <div style="font-weight:700">${t.name}</div>
+          <div class="small muted">${t.id} • ${t.status} • ${new Date(t.created_at).toLocaleString()}</div>
+        </div>
+        <div class="actions">
+          <button onclick="openTenant('${t.id}')">Open</button>
+          <button onclick="suspendTenant('${t.id}')">Suspend</button>
+          <button onclick="restoreTenant('${t.id}')">Restore</button>
+          <button class="btn-danger" onclick="deleteTenant('${t.id}')">Delete</button>
+        </div>`;
+        container.appendChild(div);
+      });
+    }
+
+    // Create tenant
+    document.getElementById('createTenantBtn').addEventListener('click', async () => {
+      const name = document.getElementById('newTenantName').value.trim();
+      if (!name) return alert('Enter tenant name');
+      try {
+        const res = await api('/tenants', { method: 'POST', body: JSON.stringify({ name }) });
+        alert('Tenant created: ' + res.id);
+        document.getElementById('newTenantName').value = '';
+        loadTenants();
+      } catch (err) { alert('Create failed: ' + err.message); }
+    });
+
+    // Tenant actions
+    async function suspendTenant(id) {
+      if (!confirm('Suspend tenant ' + id + '?')) return;
+      try {
+        await api('/tenants/' + id + '/suspend', { method: 'POST', body: JSON.stringify({ reason: 'Master suspend' }) });
+        alert('Suspended');
+        loadTenants();
+      } catch (err) { alert('Error: ' + err.message); }
+    }
+    async function restoreTenant(id) {
+      try {
+        await api('/tenants/' + id + '/restore', { method: 'POST', body: JSON.stringify({ reason: 'Master restore' }) });
+        alert('Restored');
+        loadTenants();
+      } catch (err) { alert('Error: ' + err.message); }
+    }
+    async function deleteTenant(id) {
+      if (!confirm('Delete tenant ' + id + ' (soft delete)? Click OK to soft-delete, Cancel to abort.')) return;
+      try {
+        await api('/tenants/' + id, { method: 'DELETE', body: JSON.stringify({ force: false }) });
+        alert('Deleted (soft)');
+        loadTenants();
+      } catch (err) { alert('Error: ' + err.message); }
+    }
+
+    // Open tenant details
+    async function openTenant(id) {
+      try {
+        const t = await api('/tenants/' + id);
+        renderTenantDetails(t);
+        const audits = await api('/tenants/' + id + '/audit?limit=200');
+        renderAudit(audits, id);
+      } catch (err) { alert('Error: ' + err.message); }
+    }
+
+    function renderTenantDetails(t) {
+      const area = document.getElementById('tenantDetailsArea');
+      area.innerHTML = '';
+      const panel = document.createElement('div');
+      panel.className = 'panel';
+      panel.innerHTML = `<h3>${t.name}</h3>
+        <div class="small muted">ID: ${t.id}</div>
+        <div class="small muted">Status: ${t.status}</div>
+        <div style="margin-top:8px">
+          <strong>Meta</strong>
+          <pre>${JSON.stringify(t.meta, null, 2)}</pre>
+        </div>
+        <div style="margin-top:8px">
+          <strong>Users</strong>
+          <table><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Actions</th></tr></thead><tbody id="tenantUsers"></tbody></table>
+        </div>
+        <div style="margin-top:8px" class="row">
+          <input id="newUserNameForTenant" placeholder="User name" />
+          <select id="newUserRoleForTenant"><option value="worker">Worker</option><option value="admin">Admin</option><option value="owner">Owner</option></select>
+          <input id="newUserEmailForTenant" placeholder="Email" />
+          <button id="createUserForTenantBtn">Create User</button>
+        </div>`;
+      area.appendChild(panel);
+
+      const tbody = document.getElementById('tenantUsers');
+      tbody.innerHTML = '';
+      (t.users || []).forEach(u => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${u.name}</td><td>${u.role}</td><td>${u.email || ''}</td>
+          <td><button onclick="deleteUser('${u.id}')">Delete</button></td>`;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('createUserForTenantBtn').onclick = async () => {
+        const name = document.getElementById('newUserNameForTenant').value.trim();
+        const role = document.getElementById('newUserRoleForTenant').value;
+        const email = document.getElementById('newUserEmailForTenant').value.trim();
+        if (!name) return alert('Enter name');
+        try {
+          await api('/users', { method: 'POST', body: JSON.stringify({ tenant_id: t.id, name, role, email }) });
+          alert('User created');
+          openTenant(t.id);
+        } catch (err) { alert('Error: ' + err.message); }
+      };
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('Delete user ' + id + '?')) return;
+      try {
+        await api('/users/' + id, { method: 'DELETE' });
+        alert('Deleted');
+        loadTenants();
+      } catch (err) { alert('Error: ' + err.message); }
+    }
+
+    function renderAudit(audits, tenantId) {
+      const area = document.getElementById('auditArea');
+      area.innerHTML = '';
+      const panel = document.createElement('div');
+      panel.className = 'panel';
+      panel.innerHTML = `<h3>Audit - ${tenantId}</h3>
+        <div class="small muted">Recent actions</div>
+        <table id="auditTable"><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Details</th></tr></thead><tbody></tbody></table>`;
+      area.appendChild(panel);
+      const tbody = panel.querySelector('tbody');
+      audits.forEach(a => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${new Date(a.created_at).toLocaleString()}</td><td>${a.actor}</td><td>${a.action}</td><td><pre style="white-space:pre-wrap">${JSON.stringify(a.details)}</pre></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // initial load
+    loadTenants();
+
+    // search triggers
+    document.getElementById('tenantSearch').addEventListener('input', () => setTimeout(loadTenants, 300));
+    document.getElementById('tenantStatus').addEventListener('change', loadTenants);
+  </script>
+</body>
+</html>
