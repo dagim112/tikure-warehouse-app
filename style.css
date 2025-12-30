@@ -101,3 +101,49 @@ textarea{min-height:60px}
 .store-details-panel{flex:1;background:#fff;padding:12px;border-radius:8px;box-shadow:0 6px 18px rgba(2,6,23,0.04)}
 .details-view div{margin:6px 0}
 .details-edit label{display:block;margin:8px 0}
+
+/* Big animated dashboard buttons */
+.big-buttons {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+  margin-top:20px;
+}
+.big-btn {
+  height:120px;
+  font-size:22px;
+  font-weight:700;
+  border-radius:16px;
+  border:0;
+  cursor:pointer;
+  transition:transform 0.15s ease, box-shadow 0.15s ease;
+}
+.big-btn:hover {
+  transform:scale(1.04);
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Store list items with delete */
+.store-list-item {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:4px 6px;
+  border-bottom:1px solid #eef2ff;
+}
+.store-list-item span {
+  font-size:13px;
+}
+.store-delete-btn {
+  border:0;
+  background:transparent;
+  color:var(--danger);
+  font-size:13px;
+  cursor:pointer;
+}
+
+/* Client dropdown spacing */
+#clientPanel label {
+  display:block;
+  margin:6px 0;
+}
