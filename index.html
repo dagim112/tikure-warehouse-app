@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tikure Warehouse App</title>
+  <title>እቃ ማከማቻ መተግበሪያ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -10,15 +10,15 @@
   <div id="app">
     <!-- Sidebar -->
     <aside class="sidebar">
-      <h1 class="brand">Tikure Warehouse</h1>
+      <h1 class="brand">መጋዘን</h1>
 
       <nav>
-        <button class="nav-btn active" data-view="home">Home dashboard</button>
-        <button class="nav-btn" data-view="users">User management</button>
-        <button class="nav-btn" data-view="stores">Store management</button>
-        <button class="nav-btn" data-view="inbound">Inbound</button>
-        <button class="nav-btn" data-view="outbound">Outbound</button>
-        <button class="nav-btn" data-view="sell">Sell & receipt</button>
+        <button class="nav-btn active" data-view="home">ዳሽቦርድ ዋና ገጽ</button>
+        <button class="nav-btn" data-view="users">የተጠቃሚ አስተዳደር</button>
+        <button class="nav-btn" data-view="stores">የሱቅ አስተዳደር</button>
+        <button class="nav-btn" data-view="inbound">መጋዘን ገቢ</button>
+        <button class="nav-btn" data-view="outbound">መጋዘን ወጪ</button>
+        <button class="nav-btn" data-view="sell">ሽያጭ & receipt</button>
         <button class="nav-btn" data-view="receipt">Receipt</button>
         <button class="nav-btn" data-view="storeView">Store table</button>
       </nav>
@@ -43,7 +43,7 @@
 
       <!-- Print area with 3 printing modes -->
       <div class="print-area">
-        <button class="big-print" id="openPrintMenuBtn">Print options</button>
+        <button class="big-print" id="openPrintMenuBtn">ማተሚያ</button>
         <div class="print-dropdown hidden" id="printDropdown">
           <button data-print-mode="itemBarcodes">Item barcode labels</button>
           <button data-print-mode="locationBarcodes">Location barcode labels</button>
@@ -76,11 +76,11 @@
         </div>
 
         <div class="home-grid big-buttons">
-          <button class="big-btn store-btn variant-3" data-view="inbound">Inbound scan</button>
-          <button class="big-btn store-btn variant-6" data-view="outbound">Outbound scan</button>
-          <button class="big-btn store-btn variant-5" data-view="sell">Sell & receipt</button>
+          <button class="big-btn store-btn variant-3" data-view="inbound">መጋዘን ገቢ</button>
+          <button class="big-btn store-btn variant-6" data-view="outbound">መጋዘን ወጪ</button>
+          <button class="big-btn store-btn variant-5" data-view="sell">ሽያጭ & receipt</button>
           <button class="big-btn store-btn variant-1" data-view="users">Users</button>
-          <button class="big-btn store-btn variant-4" data-view="stores">Stores</button>
+          <button class="big-btn store-btn variant-4" data-view="stores">ሱቆች</button>
           <button class="big-btn store-btn variant-2" data-view="storeView">Store table</button>
         </div>
 
