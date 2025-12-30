@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <title>Tikure Warehouse App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div id="app">
-    <!-- Sidebar -->
+
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <h1 class="brand">Tikure Warehouse</h1>
 
@@ -23,7 +25,6 @@
         <button class="nav-btn" data-view="storeView">Store table</button>
       </nav>
 
-      <!-- Current user + controls -->
       <div class="user-area">
         <div class="current-user">Current user: <span id="currentUserName">Admin</span></div>
         <div class="user-controls">
@@ -32,16 +33,12 @@
         </div>
       </div>
 
-      <!-- User management quick list -->
       <div class="user-management">
         <h3>Users</h3>
-        <div id="userList" class="small-list">
-          <!-- Filled by JS -->
-        </div>
+        <div id="userList" class="small-list"></div>
         <button id="addUserQuickBtn">Add user</button>
       </div>
 
-      <!-- Print area with 3 printing modes -->
       <div class="print-area">
         <button class="big-print" id="openPrintMenuBtn">Print options</button>
         <div class="print-dropdown hidden" id="printDropdown">
@@ -51,7 +48,6 @@
         </div>
       </div>
 
-      <!-- Store quick controls -->
       <div class="store-management">
         <h3>Quick store search</h3>
         <input type="text" id="quickStoreSearch" placeholder="Search store or product">
@@ -62,8 +58,9 @@
       </div>
     </aside>
 
-    <!-- Main content -->
+    <!-- MAIN CONTENT -->
     <main class="main">
+
       <!-- HOME VIEW -->
       <section id="view-home" class="view active">
         <h2>Dashboard</h2>
@@ -96,28 +93,21 @@
         </div>
       </section>
 
-      <!-- USER MANAGEMENT VIEW -->
+      <!-- USER MANAGEMENT -->
       <section id="view-users" class="view">
         <h2>User management</h2>
 
         <div class="controls-row">
           <div class="small-panel">
             <h3>Add / edit user</h3>
-            <label>
-              Name
-              <input type="text" id="userNameInput">
-            </label>
-            <label>
-              Role
+            <label>Name <input type="text" id="userNameInput"></label>
+            <label>Role
               <select id="userRoleInput">
                 <option value="admin">Admin</option>
                 <option value="staff">Staff</option>
               </select>
             </label>
-            <label>
-              Store permission
-              <input type="text" id="userStoreInput" placeholder="Store code or name">
-            </label>
+            <label>Store permission <input type="text" id="userStoreInput"></label>
             <button id="saveUserBtn">Save user</button>
           </div>
 
@@ -137,28 +127,20 @@
                   <th>Stores</th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- Filled by JS -->
-              </tbody>
+              <tbody></tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- STORE MANAGEMENT VIEW -->
+      <!-- STORE MANAGEMENT -->
       <section id="view-stores" class="view">
         <h2>Store management</h2>
+
         <div class="store-controls">
-          <label>
-            Store name
-            <input type="text" id="storeNameInput">
-          </label>
-          <label>
-            Store code
-            <input type="text" id="storeCodeInput">
-          </label>
-          <label>
-            Type
+          <label>Store name <input type="text" id="storeNameInput"></label>
+          <label>Store code <input type="text" id="storeCodeInput"></label>
+          <label>Type
             <select id="storeTypeInput">
               <option value="warehouse">Warehouse</option>
               <option value="frontShop">Front shop</option>
@@ -171,46 +153,29 @@
             <button id="clearStoreBtn">Clear</button>
           </div>
         </div>
+
         <div class="small-panel">
           <h3>Stores</h3>
-          <div id="storeList" class="list">
-            <!-- Filled by JS -->
-          </div>
+          <div id="storeList" class="list"></div>
         </div>
       </section>
 
-      <!-- INBOUND VIEW -->
+      <!-- INBOUND -->
       <section id="view-inbound" class="view">
         <h2>Inbound scanning</h2>
+
         <div class="inbound-panel">
-          <label>
-            Store
-            <select id="inboundStoreSelect"></select>
-          </label>
-          <label>
-            Location barcode (scan first)
-            <input type="text" id="inboundLocationInput" placeholder="Scan location barcode">
-          </label>
-          <label>
-            Scan / enter item barcode
-            <input type="text" id="inboundBarcodeInput" placeholder="Scan item" disabled>
-          </label>
-          <label>
-            Quantity
-            <input type="number" id="inboundQtyInput" value="1" min="1">
-          </label>
-          <label>
-            Price per unit
-            <input type="number" id="inboundPriceInput" value="0" min="0" step="0.01">
-          </label>
-          <label>
-            Notes
-            <textarea id="inboundNotesInput" placeholder="Optional"></textarea>
-          </label>
+          <label>Store <select id="inboundStoreSelect"></select></label>
+          <label>Location barcode <input type="text" id="inboundLocationInput"></label>
+          <label>Item barcode <input type="text" id="inboundBarcodeInput" disabled></label>
+          <label>Quantity <input type="number" id="inboundQtyInput" value="1"></label>
+          <label>Price <input type="number" id="inboundPriceInput" value="0"></label>
+          <label>Notes <textarea id="inboundNotesInput"></textarea></label>
           <button id="addInboundBtn">Add inbound</button>
         </div>
+
         <div class="scan-summary">
-          <h3>Inbound items (session)</h3>
+          <h3>Inbound items</h3>
           <table class="table" id="inboundTable">
             <thead>
               <tr>
@@ -227,7 +192,7 @@
         </div>
       </section>
 
-      <!-- OUTBOUND VIEW -->
+      <!-- OUTBOUND -->
       <section id="view-outbound" class="view">
         <h2>Outbound</h2>
 
@@ -236,83 +201,47 @@
           <button class="mode-btn" data-mode="transfer">Transfer to store</button>
         </div>
 
-        <!-- Shared outbound scanning area -->
         <div class="outbound-panel">
-          <label>
-            From store
-            <select id="outboundFromStoreSelect"></select>
-          </label>
-
-          <!-- PRICE ALWAYS FIRST -->
-          <label>
-            Price per unit
-            <input type="number" id="outboundPriceInput" value="0" min="0" step="0.01">
-          </label>
+          <label>From store <select id="outboundFromStoreSelect"></select></label>
+          <label>Price <input type="number" id="outboundPriceInput" value="0"></label>
 
           <label id="outboundLocationLabel">
-            Location barcode (scan first, required for warehouse)
-            <input type="text" id="outboundLocationInput" placeholder="Scan location barcode">
+            Location barcode
+            <input type="text" id="outboundLocationInput">
           </label>
 
-          <label>
-            Scan / enter item barcode
-            <input type="text" id="outboundBarcodeInput" disabled>
-          </label>
-
-          <label>
-            Quantity
-            <input type="number" id="outboundQtyInput" value="1" min="1">
-          </label>
+          <label>Item barcode <input type="text" id="outboundBarcodeInput" disabled></label>
+          <label>Quantity <input type="number" id="outboundQtyInput" value="1"></label>
 
           <label id="outboundToStoreWrapper">
             Transfer to store
             <select id="outboundToStoreSelect"></select>
           </label>
 
-          <label>
-            Notes
-            <textarea id="outboundNotesInput" placeholder="Optional"></textarea>
-          </label>
+          <label>Notes <textarea id="outboundNotesInput"></textarea></label>
           <button id="addOutboundBtn">Add outbound</button>
         </div>
 
-        <!-- Client panel for sell mode -->
         <div class="small-panel" id="clientPanel">
-          <h3>Client information (sell)</h3>
-
-          <label>
-            Existing client
-            <select id="clientSelect">
-              <!-- Filled by JS -->
-            </select>
-          </label>
-
+          <h3>Client information</h3>
+          <label>Existing client <select id="clientSelect"></select></label>
           <button id="addNewClientToggleBtn">Add new client</button>
 
-          <div id="newClientForm" class="hidden" style="margin-top:8px">
-            <label>
-              Client name
-              <input type="text" id="clientNameInput">
-            </label>
-            <label>
-              Town
-              <input type="text" id="clientTownInput">
-            </label>
-            <label>
-              Telephone
-              <input type="text" id="clientPhoneInput">
-            </label>
+          <div id="newClientForm" class="hidden">
+            <label>Name <input type="text" id="clientNameInput"></label>
+            <label>Town <input type="text" id="clientTownInput"></label>
+            <label>Phone <input type="text" id="clientPhoneInput"></label>
             <button id="saveClientBtn">Save client</button>
           </div>
         </div>
 
         <div class="scan-summary">
-          <h3>Outbound items (session)</h3>
+          <h3>Outbound items</h3>
           <table class="table" id="outboundTable">
             <thead>
               <tr>
                 <th>Mode</th>
-                <th>Client / Store</th>
+                <th>Client/Store</th>
                 <th>Location</th>
                 <th>Barcode</th>
                 <th>Qty</th>
@@ -327,39 +256,24 @@
         </div>
       </section>
 
-      <!-- SELL & RECEIPT VIEW -->
+      <!-- SELL & RECEIPT -->
       <section id="view-sell" class="view">
         <h2>Sell & receipt</h2>
 
         <div class="sell-controls">
           <div class="row">
-            <label>
-              Selling from store
-              <select id="sellStoreSelect"></select>
-            </label>
+            <label>Selling from store <select id="sellStoreSelect"></select></label>
             <button id="sellAddStoreBtn">Add store</button>
           </div>
 
           <div class="row" id="sellWarehouseLocationRow">
-            <label>
-              Location barcode (required for warehouse)
-              <input type="text" id="sellLocationInput" placeholder="Scan location">
-            </label>
+            <label>Location barcode <input type="text" id="sellLocationInput"></label>
           </div>
 
           <div class="row">
-            <label>
-              Scan / enter barcode
-              <input type="text" id="sellBarcodeInput" disabled>
-            </label>
-            <label>
-              Qty
-              <input type="number" id="sellQtyInput" value="1" min="1">
-            </label>
-            <label>
-              Price per unit
-              <input type="number" id="sellPriceInput" value="0" min="0" step="0.01">
-            </label>
+            <label>Barcode <input type="text" id="sellBarcodeInput" disabled></label>
+            <label>Qty <input type="number" id="sellQtyInput" value="1"></label>
+            <label>Price <input type="number" id="sellPriceInput" value="0"></label>
             <button id="addSellItemBtn">Add item</button>
           </div>
         </div>
@@ -377,26 +291,28 @@
             </thead>
             <tbody></tbody>
           </table>
-          <div class="row" style="margin-top:8px">
+
+          <div class="row">
             <div><strong>Subtotal:</strong> <span id="sellSubtotal">0.00</span></div>
             <div><strong>Tax:</strong> <span id="sellTax">0.00</span></div>
-            <div><strong>Grand total:</strong> <span id="sellTotal">0.00</span></div>
+            <div><strong>Total:</strong> <span id="sellTotal">0.00</span></div>
           </div>
-          <div class="row" style="margin-top:8px">
+
+          <div class="row">
             <button id="completeSaleBtn" class="store-btn variant-3">Complete sale</button>
             <button id="cancelSaleBtn" class="danger">Cancel</button>
           </div>
         </div>
       </section>
 
-      <!-- RECEIPT VIEW -->
+      <!-- RECEIPT -->
       <section id="view-receipt" class="view">
         <h2>Receipt & print</h2>
+
         <div id="receiptPrintArea">
           <h3>Tikure Store Receipt</h3>
-          <div id="receiptMeta">
-            <!-- filled by JS -->
-          </div>
+          <div id="receiptMeta"></div>
+
           <table class="table" id="receiptTable">
             <thead>
               <tr>
@@ -408,15 +324,15 @@
             </thead>
             <tbody></tbody>
           </table>
-          <div id="receiptTotals" style="margin-top:8px">
-            <!-- totals filled by JS -->
-          </div>
+
+          <div id="receiptTotals"></div>
         </div>
       </section>
 
-      <!-- STORE TABLE VIEW -->
+      <!-- STORE TABLE -->
       <section id="view-storeView" class="view">
         <h2>Store table</h2>
+
         <div class="store-main-grid">
           <div class="store-table-panel">
             <table class="table" id="storeTable">
@@ -432,6 +348,7 @@
               <tbody></tbody>
             </table>
           </div>
+
           <div class="store-details-panel">
             <h3>Item details</h3>
             <div class="details-view" id="itemDetailsView">
@@ -445,9 +362,11 @@
           </div>
         </div>
       </section>
+
     </main>
   </div>
 
+  <!-- LOAD JAVASCRIPT -->
   <script src="app.js"></script>
 </body>
 </html>
